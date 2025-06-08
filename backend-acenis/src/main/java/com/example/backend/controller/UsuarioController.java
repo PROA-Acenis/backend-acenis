@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:3000", "login-acenis.vercel.app/"})
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
