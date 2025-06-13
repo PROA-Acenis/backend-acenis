@@ -19,8 +19,8 @@ public class PostService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Post criarPost(Long idUsuario, String conteudo) {
-        Usuario autor = usuarioRepository.findById(idUsuario)
+    public Post criarPost(Integer idUser, String conteudo) {
+        Usuario autor = usuarioRepository.findById(idUser)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         Post post = new Post();
@@ -31,8 +31,8 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public List<Post> listarPostsPorUsuario(Long idUsuario) {
-        return postRepository.findByAutorId(idUsuario);
+    public List<Post> listarPostsPorUsuario(Integer idUser) {
+        return postRepository.findByAutorIdUser(idUser);
     }
 
     public List<Post> listarTodos() {
