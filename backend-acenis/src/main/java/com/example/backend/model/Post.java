@@ -13,7 +13,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_post")
-    private Long id;
+    private Interger id;
 
     @Column(name = "content_post", nullable = false, columnDefinition = "TEXT")
     private String conteudo;
