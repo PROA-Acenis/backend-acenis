@@ -4,8 +4,6 @@ public class PostRequest {
     private Integer idUser;
     private String conteudo;
 
-    public PostRequest() {}
-
     public Integer getIdUser() {
         return idUser;
     }

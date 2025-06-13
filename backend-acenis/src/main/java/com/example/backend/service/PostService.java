@@ -21,7 +21,7 @@ public class PostService {
 
     public Post criarPost(Integer idUser, String conteudo) {
         Usuario autor = usuarioRepository.findById(idUser)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + idUser));
 
         Post post = new Post();
         post.setAutor(autor);

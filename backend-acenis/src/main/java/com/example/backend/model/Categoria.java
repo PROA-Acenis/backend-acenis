@@ -15,19 +15,8 @@ public class Categoria {
     @Column(name = "name_category", nullable = false)
     private NomeCategoria nome;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public NomeCategoria getNome() {
-        return nome;
-    }
-
-    public void setNome(NomeCategoria nome) {
-        this.nome = nome;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public NomeCategoria getNome() { return nome; }
+    public void setNome(NomeCategoria nome) { this.nome = nome; }
 }

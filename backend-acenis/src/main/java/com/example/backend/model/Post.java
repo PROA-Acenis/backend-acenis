@@ -1,13 +1,10 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_post")
-@Data
 public class Post {
 
     @Id
@@ -24,4 +21,13 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
     private Usuario autor;
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getConteudo() { return conteudo; }
+    public void setConteudo(String conteudo) { this.conteudo = conteudo; }
+    public LocalDateTime getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+    public Usuario getAutor() { return autor; }
+    public void setAutor(Usuario autor) { this.autor = autor; }
 }

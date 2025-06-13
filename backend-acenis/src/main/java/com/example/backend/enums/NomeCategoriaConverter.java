@@ -11,7 +11,7 @@ public class NomeCategoriaConverter implements AttributeConverter<NomeCategoria,
         if (categoria == null) {
             return null;
         }
-        return categoria.getDescricao(); // Salva "quebra-cabeça" no banco
+        return categoria.getDescricao();
     }
 
     @Override
@@ -19,6 +19,6 @@ public class NomeCategoriaConverter implements AttributeConverter<NomeCategoria,
         if (dbData == null) {
             return null;
         }
-        return NomeCategoria.fromDescricao(dbData); // Lê "quebra-cabeça" do banco
+        return NomeCategoria.fromDescricao(dbData);
     }
 }
