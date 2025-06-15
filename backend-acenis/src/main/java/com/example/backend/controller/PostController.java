@@ -44,22 +44,25 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Post>> getAllPosts() {
+        List<Post> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
+    }
+
+
     @GetMapping("/usuario/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Integer userId) {
-
         List<Post> posts = postService.getPostsByAutorId(userId);
         return ResponseEntity.ok(posts);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
-
         if (!postService.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-
         postService.deletePost(id);
-
         return ResponseEntity.noContent().build();
     }
 }
