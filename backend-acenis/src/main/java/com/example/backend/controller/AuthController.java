@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-// Remova a linha abaixo se ela existir no seu código:
-// @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

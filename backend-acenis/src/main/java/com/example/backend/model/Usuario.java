@@ -30,11 +30,11 @@ public class Usuario {
     @Column(name = "tipo")
     private TipoUsuario tipo;
 
-    public int getIdUser() {
+    public Integer getIdUser() { // Alterado para Integer para consistência com as propriedades
         return idUser;
     }
 
-    public void setIdUser(int idUser) {
+    public void setIdUser(Integer idUser) { // Alterado para Integer para consistência com as propriedades
         this.idUser = idUser;
     }
 

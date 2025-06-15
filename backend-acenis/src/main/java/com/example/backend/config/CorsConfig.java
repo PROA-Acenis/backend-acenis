@@ -17,7 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",
                                 "https://backend-acenis-production.up.railway.app"
-                                // "https://SEU-DOMINO-FRONTEND-PRODUCAO.com" // <-- DESCOMENTE E COLOQUE SEU DOMÍNIO DE FRONTEND QUANDO TIVER!
+                                // "https://SEU-DOMINO-FRONTEND-PRODUCAO.com" //
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

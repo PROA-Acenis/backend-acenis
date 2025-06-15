@@ -16,6 +16,7 @@ public class PostService {
     }
 
     public List<Post> getPostsByAutorId(Integer autorId) {
+        // ALTERADO: Chama o método findByAutor_IdUser do repositório
         return postRepository.findByAutor_IdUser(autorId);
     }
 

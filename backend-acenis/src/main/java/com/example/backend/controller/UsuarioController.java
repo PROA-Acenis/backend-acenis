@@ -1,7 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.UsuarioUpdateRequest;
-import com.example.backend.model.TipoUsuario; // Importe o enum
+import com.example.backend.model.TipoUsuario;
 import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;

@@ -22,7 +22,6 @@ public class CommentController {
         Integer idPost = commentRequest.getIdPost();
         String conteudo = commentRequest.getContent();
 
-
         return commentService.criarComentario(idUser, idPost, conteudo);
     }
 

@@ -1,14 +1,14 @@
 package com.example.backend.controller;
 
 import com.example.backend.service.LikePostService;
-import com.example.backend.dto.LikeRequest; // Esta importação deve estar correta
+import com.example.backend.dto.LikeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/likes") // Opcional: garanta que o RequestMapping esteja aqui se ele sumiu
-public class LikeController { // O nome da classe deve ser LikeController
+@RequestMapping("/api/likes")
+public class LikeController {
 
     @Autowired
     private LikePostService likePostService;

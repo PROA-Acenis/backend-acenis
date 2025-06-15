@@ -13,10 +13,10 @@ public class Comment {
     private Integer id;
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content; // Era 'conteudo'
+    private String content;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // Era 'dataCriacao'
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -54,7 +54,6 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
-    // Getter e Setter para 'updatedAt' (se você o adicionou)
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }

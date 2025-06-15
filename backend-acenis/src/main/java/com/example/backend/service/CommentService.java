@@ -33,11 +33,8 @@ public class CommentService {
             Comment comentario = new Comment();
             comentario.setUsuario(usuarioOptional.get());
             comentario.setPost(postOptional.get());
-
             comentario.setContent(conteudo);
-
             comentario.setCreatedAt(LocalDateTime.now());
-
             return commentRepository.save(comentario);
         } else {
             throw new RuntimeException("Usuário ou Post não encontrado.");

@@ -3,7 +3,6 @@ package com.example.backend.controller;
 import com.example.backend.dto.PostRequest;
 import com.example.backend.model.Post;
 import com.example.backend.model.Usuario;
-import com.example.backend.repository.PostRepository;
 import com.example.backend.repository.UsuarioRepository;
 import com.example.backend.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -18,12 +17,10 @@ import java.util.Optional;
 @RequestMapping("/api/posts")
 public class PostController {
 
-    private final PostRepository postRepository;
     private final UsuarioRepository usuarioRepository;
     private final PostService postService;
 
-    public PostController(PostRepository postRepository, UsuarioRepository usuarioRepository, PostService postService) {
-        this.postRepository = postRepository;
+    public PostController(UsuarioRepository usuarioRepository, PostService postService) {
         this.usuarioRepository = usuarioRepository;
         this.postService = postService;
     }
@@ -36,25 +33,27 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        Usuario usuario = usuarioOpt.get();
+        Usuario autor = usuarioOpt.get();
 
         Post newPost = new Post();
         newPost.setConteudo(postRequest.getConteudo());
-        newPost.setAutor(usuario);
+        newPost.setAutor(autor);
         newPost.setDataCriacao(LocalDateTime.now());
 
-        Post savedPost = postRepository.save(newPost);
+        Post savedPost = postService.createPost(newPost);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPost);
     }
 
     @GetMapping("/usuario/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Integer userId) {
+
         List<Post> posts = postService.getPostsByAutorId(userId);
         return ResponseEntity.ok(posts);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
+
         if (!postService.existsById(id)) {
             return ResponseEntity.notFound().build();
         }

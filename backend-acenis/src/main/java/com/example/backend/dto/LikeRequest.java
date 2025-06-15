@@ -1,6 +1,5 @@
 package com.example.backend.dto;
 
-// Se estiver usando Lombok, adicione as importações e anotações necessárias
 public class LikeRequest {
     private Integer postId;
     private Integer userId;
