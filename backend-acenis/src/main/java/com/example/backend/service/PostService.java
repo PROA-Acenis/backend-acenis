@@ -1,41 +1,37 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Post;
-import com.example.backend.model.Usuario;
 import com.example.backend.repository.PostRepository;
-import com.example.backend.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class PostService {
 
-    @Autowired
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 
-    public Post criarPost(Integer idUser, String conteudo) {
-        Usuario autor = usuarioRepository.findById(idUser)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + idUser));
+    public List<Post> getPostsByAutorId(Integer autorId) {
+        return postRepository.findByAutor_IdUser(autorId);
+    }
 
-        Post post = new Post();
-        post.setAutor(autor);
-        post.setConteudo(conteudo);
-        post.setDataCriacao(LocalDateTime.now());
-
+    public Post createPost(Post post) {
         return postRepository.save(post);
     }
 
-    public List<Post> listarPostsPorUsuario(Integer idUser) {
-        return postRepository.findByAutorIdUser(idUser);
+    public void deletePost(Integer postId) {
+        postRepository.deleteById(postId);
     }
 
-    public List<Post> listarTodos() {
+    public boolean existsById(Integer postId) {
+        return postRepository.existsById(postId);
+    }
+
+    public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 }
