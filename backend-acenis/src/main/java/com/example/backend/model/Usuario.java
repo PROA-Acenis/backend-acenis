@@ -30,11 +30,14 @@ public class Usuario {
     @Column(name = "tipo")
     private TipoUsuario tipo;
 
-    public Integer getIdUser() { // Alterado para Integer para consistência com as propriedades
+    @Column(name = "profile_pic")
+    private String profilePic;
+
+    public Integer getIdUser() {
         return idUser;
     }
 
-    public void setIdUser(Integer idUser) { // Alterado para Integer para consistência com as propriedades
+    public void setIdUser(Integer idUser) {
         this.idUser = idUser;
     }
 
@@ -88,5 +91,13 @@ public class Usuario {
 
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 }

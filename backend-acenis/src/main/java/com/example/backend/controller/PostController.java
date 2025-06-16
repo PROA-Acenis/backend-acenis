@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.PostRequest;
+import com.example.backend.dto.PostResponse; // Importar PostResponse
 import com.example.backend.model.Post;
 import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
@@ -45,8 +46,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
+    public ResponseEntity<List<PostResponse>> getAllPosts(@RequestParam(required = false) Integer userId) {
+        List<PostResponse> posts = postService.getAllPosts(userId);
         return ResponseEntity.ok(posts);
     }
 

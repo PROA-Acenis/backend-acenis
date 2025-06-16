@@ -1,7 +1,9 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime; // Importação necessária
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_post")
@@ -10,7 +12,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_post")
-    private Integer id; // MANTIDO: ID como Integer
+    private Integer id;
 
     @Column(name = "content_post", nullable = false, columnDefinition = "TEXT")
     private String conteudo;
@@ -18,22 +20,22 @@ public class Post {
     @Column(name = "creation_date_post", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @ManyToOne(fetch = FetchType.EAGER) // ADICIONADO: FetchType.EAGER para carregar o autor junto com o post
-    @JoinColumn(name = "id_user", nullable = false) // Coluna de chave estrangeira que aponta para o ID do usuário
-    private Usuario autor; // MANTIDO: Nome do campo 'autor'
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_user", nullable = false)
+    private Usuario autor;
 
-    // Construtor padrão (necessário para JPA)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
     public Post() {
     }
 
-    // ADICIONADO: Construtor com campos necessários para criar um Post
     public Post(String conteudo, Usuario autor) {
         this.conteudo = conteudo;
         this.autor = autor;
-        this.dataCriacao = LocalDateTime.now(); // Define a data de criação automaticamente
+        this.dataCriacao = LocalDateTime.now();
     }
 
-    // --- Getters e Setters (mantidos com 'Integer id' e 'autor') ---
     public Integer getId() {
         return id;
     }
@@ -64,5 +66,23 @@ public class Post {
 
     public void setAutor(Usuario autor) {
         this.autor = autor;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
+
+    public void addLike(Like like) {
+        this.likes.add(like);
+        like.setPost(this);
+    }
+
+    public void removeLike(Like like) {
+        this.likes.remove(like);
+        like.setPost(null);
     }
 }
