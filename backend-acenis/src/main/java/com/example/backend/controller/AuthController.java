@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/auth") // Endpoint diferente pra não confundir com /usuarios
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
@@ -28,7 +27,7 @@ public class AuthController {
             Usuario usuario = usuarioOpt.get();
 
             if (loginRequest.getSenha().equals(usuario.getPasswordUser())){
-                LoginResponse response = new LoginResponse(usuario.getNameUser(), usuario.getTipo().name());
+                LoginResponse response = new LoginResponse(usuario.getIdUser(), usuario.getNameUser(), usuario.getTipo().name());
                 return ResponseEntity.ok(response);
             }
         }
