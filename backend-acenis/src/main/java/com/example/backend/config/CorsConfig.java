@@ -17,7 +17,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",
                                 "https://backend-acenis-production.up.railway.app",
-                                "https://front-end-acenis2.vercel.app/"
+                                "https://front-end-acenis2.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
