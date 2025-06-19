@@ -1,6 +1,10 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Table(name = "tb_user")
 @Entity
@@ -17,6 +21,7 @@ public class Usuario {
     @Column(name = "email_user", unique = true)
     private String emailUser;
 
+    @JsonIgnore
     @Column(name = "password_user")
     private String passwordUser;
 
@@ -32,6 +37,19 @@ public class Usuario {
 
     @Column(name = "profile_pic")
     private String profilePic;
+
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("user-posts")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("user-comments")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("user-likes")
+    private List<Like> likes = new ArrayList<>();
+
 
     public Integer getIdUser() {
         return idUser;
@@ -99,5 +117,59 @@ public class Usuario {
 
     public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
+        post.setAutor(this);
+    }
+
+    public void removePost(Post post) {
+        this.posts.remove(post);
+        post.setAutor(null);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setUsuario(this);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.setUsuario(null);
+    }
+
+    public void addLike(Like like) {
+        this.likes.add(like);
+        like.setUser(this);
+    }
+
+    public void removeLike(Like like) {
+        this.likes.remove(like);
+        like.setUser(null);
     }
 }

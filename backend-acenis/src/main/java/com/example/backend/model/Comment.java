@@ -2,6 +2,7 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_comment")
@@ -21,14 +22,25 @@ public class Comment {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "id_user", nullable = false)
-    private Usuario usuario;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_post", nullable = false)
+    @JsonBackReference("post-comments")
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user", nullable = false)
+    @JsonBackReference("user-comments")
+    private Usuario usuario;
+
+    public Comment() {
+    }
+
+    public Comment(String content, Post post, Usuario usuario) {
+        this.content = content;
+        this.post = post;
+        this.usuario = usuario;
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Integer getId() {
         return id;
@@ -77,5 +89,4 @@ public class Comment {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
 }

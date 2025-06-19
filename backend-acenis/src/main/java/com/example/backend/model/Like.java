@@ -2,7 +2,8 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.example.backend.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tb_like")
@@ -13,12 +14,14 @@ public class Like {
     @Column(name = "id_like")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_post", nullable = false)
+    @JsonBackReference("post-likes")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
+    @JsonBackReference("user-likes")
     private Usuario user;
 
     @Column(name = "created_at")

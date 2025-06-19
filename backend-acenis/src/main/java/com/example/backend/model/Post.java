@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_post")
@@ -20,12 +22,19 @@ public class Post {
     @Column(name = "creation_date_post", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
+    @JsonBackReference("user-posts")
     private Usuario autor;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Adiciona FetchType.LAZY
+    @JsonManagedReference("post-likes")
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Adiciona FetchType.LAZY
+    @JsonManagedReference("post-comments")
+    private List<Comment> comments = new ArrayList<>();
+
 
     public Post() {
     }
@@ -76,6 +85,14 @@ public class Post {
         this.likes = likes;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
     public void addLike(Like like) {
         this.likes.add(like);
         like.setPost(this);
@@ -84,5 +101,15 @@ public class Post {
     public void removeLike(Like like) {
         this.likes.remove(like);
         like.setPost(null);
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.setPost(this);
+    }
+
+    public void removeComment(Comment comment) {
+        this.comments.remove(comment);
+        comment.setPost(null);
     }
 }
