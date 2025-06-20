@@ -31,22 +31,18 @@ public class PostService {
     }
 
     public List<PostResponse> getAllPosts(Integer currentUserId) {
-        List<Post> posts = postRepository.findAll();
-        Usuario currentUser = null;
+        List<PostResponse> posts = postRepository.findAllPostsWithCounts();
+
         if (currentUserId != null) {
-            currentUser = usuarioRepository.findById(currentUserId).orElse(null);
-        }
-
-        final Usuario finalCurrentUser = currentUser;
-
-        return posts.stream().map(post -> {
-            Long likesCount = likePostRepository.countByPost(post);
-            boolean likedByUser = false;
-            if (finalCurrentUser != null) {
-                likedByUser = likePostRepository.findByPostAndUser(post, finalCurrentUser).isPresent();
+            Usuario currentUser = usuarioRepository.findById(currentUserId).orElse(null);
+            if (currentUser != null) {
+                final Usuario finalCurrentUser = currentUser;
+                posts.forEach(postResponse -> {
+                    postResponse.setLikedByUser(likePostRepository.findByPostIdAndUser(postResponse.getId(), finalCurrentUser).isPresent());
+                });
             }
-            return new PostResponse(post, likesCount, likedByUser);
-        }).collect(Collectors.toList());
+        }
+        return posts;
     }
 
     public List<Post> getAllPostsRaw() {
@@ -54,8 +50,19 @@ public class PostService {
     }
 
 
-    public List<Post> getPostsByAutorId(Integer autorId) {
-        return postRepository.findByAutor_IdUser(autorId);
+    public List<PostResponse> getPostsByAutorId(Integer autorId, Integer currentUserId) {
+        List<PostResponse> posts = postRepository.findByAutor_IdUserWithCounts(autorId);
+
+        if (currentUserId != null) {
+            Usuario currentUser = usuarioRepository.findById(currentUserId).orElse(null);
+            if (currentUser != null) {
+                final Usuario finalCurrentUser = currentUser;
+                posts.forEach(postResponse -> {
+                    postResponse.setLikedByUser(likePostRepository.findByPostIdAndUser(postResponse.getId(), finalCurrentUser).isPresent());
+                });
+            }
+        }
+        return posts;
     }
 
     public void deletePost(Integer id) {

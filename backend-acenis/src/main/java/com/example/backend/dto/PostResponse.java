@@ -10,17 +10,28 @@ public class PostResponse {
     private LocalDateTime dataCriacao;
     private UsuarioResponse autor;
     private Long likesCount;
+    private Long commentsCount;
     private boolean likedByUser;
 
     public PostResponse() {
     }
+    public PostResponse(Post post, Long likesCount, Long commentsCount, boolean likedByUser) {
+        this.id = post.getId();
+        this.conteudo = post.getConteudo();
+        this.dataCriacao = post.getDataCriacao();
+        this.autor = new UsuarioResponse(post.getAutor());
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
+        this.likedByUser = likedByUser;
+    }
 
-    public static PostResponse fromPost(Post post, Integer currentUserId) {
+       public static PostResponse fromPost(Post post, Integer currentUserId) {
         if (post == null) {
             return null;
         }
 
         Long likesCount = (long) (post.getLikes() != null ? post.getLikes().size() : 0);
+        Long commentsCount = (long) (post.getComments() != null ? post.getComments().size() : 0);
 
         boolean likedByUser = false;
         if (currentUserId != null && post.getLikes() != null) {
@@ -34,18 +45,10 @@ public class PostResponse {
         response.setDataCriacao(post.getDataCriacao());
         response.setAutor(new UsuarioResponse(post.getAutor()));
         response.setLikesCount(likesCount);
+        response.setCommentsCount(commentsCount);
         response.setLikedByUser(likedByUser);
 
         return response;
-    }
-
-    public PostResponse(Post post, Long likesCount, boolean likedByUser) {
-        this.id = post.getId();
-        this.conteudo = post.getConteudo();
-        this.dataCriacao = post.getDataCriacao();
-        this.autor = new UsuarioResponse(post.getAutor());
-        this.likesCount = likesCount;
-        this.likedByUser = likedByUser;
     }
 
 
@@ -87,6 +90,14 @@ public class PostResponse {
 
     public void setLikesCount(Long likesCount) {
         this.likesCount = likesCount;
+    }
+
+    public Long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(Long commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public boolean isLikedByUser() {

@@ -6,12 +6,11 @@ import com.example.backend.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Optional; // Ensure this import is present
 
 @Repository
 public interface LikePostRepository extends JpaRepository<Like, Integer> {
-    Optional<Like> findByPostAndUser(Post post, Usuario user);
     Long countByPost(Post post);
-    List<Like> findAllByPost(Post post);
+
+    Optional<Like> findByPostIdAndUser(Integer postId, Usuario user);
 }

@@ -6,40 +6,42 @@ import com.example.backend.model.Usuario;
 import com.example.backend.repository.LikePostRepository;
 import com.example.backend.repository.PostRepository;
 import com.example.backend.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Service
 public class LikePostService {
 
-    @Autowired
-    private LikePostRepository likePostRepository;
+    private final LikePostRepository likePostRepository;
+    private final PostRepository postRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    public LikePostService(LikePostRepository likePostRepository, PostRepository postRepository, UsuarioRepository usuarioRepository) {
+        this.likePostRepository = likePostRepository;
+        this.postRepository = postRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
-    @Autowired
-    private PostRepository postRepository;
-
-    public String toggleLike(Integer postId, Integer userId) {
-
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
+    @Transactional
+    public void toggleLike(Integer postId, Integer userId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        Usuario user = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        Like like = likePostRepository.findByPostAndUser(post, usuario).orElse(null);
+        Optional<Like> existingLike = likePostRepository.findByPostIdAndUser(postId, user);
 
-        if (like != null) {
-            likePostRepository.delete(like);
-            return "Descurtido com sucesso";
+        if (existingLike.isPresent()) {
+            likePostRepository.delete(existingLike.get());
         } else {
             Like newLike = new Like();
             newLike.setPost(post);
-            newLike.setUser(usuario);
+            newLike.setUser(user);
             likePostRepository.save(newLike);
-            return "Curtido com sucesso";
         }
     }
 }
