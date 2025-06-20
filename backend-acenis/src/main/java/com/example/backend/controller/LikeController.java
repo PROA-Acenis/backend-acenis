@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.service.LikePostService;
+import com.example.backend.dto.LikeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,10 @@ public class LikeController {
     }
 
     @PostMapping("/toggle")
-    public ResponseEntity<Void> toggleLike(@RequestParam Integer postId, @RequestParam Integer userId) {
+    public ResponseEntity<Void> toggleLike(@RequestBody LikeRequest likeRequest) {
 
-        likePostService.toggleLike(postId, userId);
+        likePostService.toggleLike(likeRequest.getPostId(), likeRequest.getUserId());
 
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
 }
