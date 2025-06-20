@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Table(name = "tb_user")
 @Entity
@@ -49,6 +50,15 @@ public class Usuario {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("user-likes")
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("follower-follows")
+    private List<Follow> following = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("followed-follows")
+    private List<Follow> followers = new ArrayList<>();
+
 
 
     public Integer getIdUser() {
@@ -143,6 +153,22 @@ public class Usuario {
         this.likes = likes;
     }
 
+    public List<Follow> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<Follow> following) {
+        this.following = following;
+    }
+
+    public List<Follow> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<Follow> followers) {
+        this.followers = followers;
+    }
+
     public void addPost(Post post) {
         this.posts.add(post);
         post.setAutor(this);
@@ -171,5 +197,25 @@ public class Usuario {
     public void removeLike(Like like) {
         this.likes.remove(like);
         like.setUser(null);
+    }
+
+    public void addFollowing(Follow follow) {
+        this.following.add(follow);
+        follow.setFollower(this);
+    }
+
+    public void removeFollowing(Follow follow) {
+        this.following.remove(follow);
+        follow.setFollower(null);
+    }
+
+    public void addFollower(Follow follow) {
+        this.followers.add(follow);
+        follow.setFollowed(this);
+    }
+
+    public void removeFollower(Follow follow) {
+        this.followers.remove(follow);
+        follow.setFollowed(null);
     }
 }
