@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.UsuarioRegistrationDTO;
 import com.example.backend.dto.UsuarioUpdateRequest;
 import com.example.backend.model.TipoUsuario;
 import com.example.backend.model.Usuario;
@@ -23,16 +24,38 @@ public class UsuarioController {
     }
 
     /**
-     * Endpoint para CADASTRAR um novo usuário.
+     * Endpoint para CADASTRAR um novo usuário usando um DTO.
      * Método: POST
      * URL: /usuarios
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Usuario cadastrar(@RequestBody Usuario usuario) {
-        if (usuarioRepository.existsByEmailUser(usuario.getEmailUser())) {
-            throw new RuntimeException("Email já cadastrado.");
+    public ResponseEntity<Usuario> cadastrar(@RequestBody UsuarioRegistrationDTO registrationDTO) { // Agora aceita o DTO!
+        if (usuarioRepository.existsByEmailUser(registrationDTO.getEmailUser())) {
+            return ResponseEntity.status(409).body(null);
         }
-        return usuarioRepository.save(usuario);
+
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setNameUser(registrationDTO.getNameUser());
+        novoUsuario.setEmailUser(registrationDTO.getEmailUser());
+        novoUsuario.setPasswordUser(registrationDTO.getPasswordUser());
+        novoUsuario.setTipo(registrationDTO.getTipo());
+
+        if (registrationDTO.getJob() != null) {
+            novoUsuario.setJob(registrationDTO.getJob());
+        }
+        if (registrationDTO.getRegister() != null) {
+            novoUsuario.setRegister(registrationDTO.getRegister());
+        }
+        if (registrationDTO.getCnpj() != null) {
+            novoUsuario.setCnpj(registrationDTO.getCnpj());
+        }
+        if (registrationDTO.getCategoria() != null) {
+            novoUsuario.setCategoria(registrationDTO.getCategoria());
+        }
+
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+
+        return ResponseEntity.status(201).body(usuarioSalvo);
     }
 
     /**
