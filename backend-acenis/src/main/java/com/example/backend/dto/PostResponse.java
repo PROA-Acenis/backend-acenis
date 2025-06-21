@@ -1,54 +1,45 @@
 package com.example.backend.dto;
 
 import com.example.backend.model.Post;
+import com.example.backend.model.Usuario;
+
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class PostResponse {
     private Integer id;
     private String conteudo;
     private LocalDateTime dataCriacao;
-    private UsuarioResponse autor;
+    private AuthorResponse autor;
     private Long likesCount;
     private Long commentsCount;
-    private boolean likedByUser;
+    private Boolean likedByUser;
 
-    public PostResponse() {
-    }
-    public PostResponse(Post post, Long likesCount, Long commentsCount, boolean likedByUser) {
-        this.id = post.getId();
-        this.conteudo = post.getConteudo();
-        this.dataCriacao = post.getDataCriacao();
-        this.autor = new UsuarioResponse(post.getAutor());
+    public PostResponse(
+            Integer id,
+            String conteudo,
+            LocalDateTime dataCriacao,
+            Usuario autor,
+            Long likesCount,
+            Long commentsCount,
+            Boolean likedByUser
+    ) {
+        this.id = id;
+        this.conteudo = conteudo;
+        this.dataCriacao = dataCriacao;
+        this.autor = new AuthorResponse(autor);
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
         this.likedByUser = likedByUser;
     }
 
-       public static PostResponse fromPost(Post post, Integer currentUserId) {
-        if (post == null) {
-            return null;
-        }
-
-        Long likesCount = (long) (post.getLikes() != null ? post.getLikes().size() : 0);
-        Long commentsCount = (long) (post.getComments() != null ? post.getComments().size() : 0);
-
-        boolean likedByUser = false;
-        if (currentUserId != null && post.getLikes() != null) {
-            likedByUser = post.getLikes().stream()
-                    .anyMatch(like -> like.getUser() != null && like.getUser().getIdUser().equals(currentUserId));
-        }
-
-        PostResponse response = new PostResponse();
-        response.setId(post.getId());
-        response.setConteudo(post.getConteudo());
-        response.setDataCriacao(post.getDataCriacao());
-        response.setAutor(new UsuarioResponse(post.getAutor()));
-        response.setLikesCount(likesCount);
-        response.setCommentsCount(commentsCount);
-        response.setLikedByUser(likedByUser);
-
-        return response;
+    public PostResponse(Post post, Long likesCount, Long commentsCount, Boolean likedByUser) {
+        this.id = post.getId();
+        this.conteudo = post.getConteudo();
+        this.dataCriacao = post.getDataCriacao();
+        this.autor = new AuthorResponse(post.getAutor());
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
+        this.likedByUser = likedByUser;
     }
 
 
@@ -76,11 +67,11 @@ public class PostResponse {
         this.dataCriacao = dataCriacao;
     }
 
-    public UsuarioResponse getAutor() {
+    public AuthorResponse getAutor() {
         return autor;
     }
 
-    public void setAutor(UsuarioResponse autor) {
+    public void setAutor(AuthorResponse autor) {
         this.autor = autor;
     }
 
@@ -100,11 +91,11 @@ public class PostResponse {
         this.commentsCount = commentsCount;
     }
 
-    public boolean isLikedByUser() {
+    public Boolean getLikedByUser() {
         return likedByUser;
     }
 
-    public void setLikedByUser(boolean likedByUser) {
+    public void setLikedByUser(Boolean likedByUser) {
         this.likedByUser = likedByUser;
     }
 }

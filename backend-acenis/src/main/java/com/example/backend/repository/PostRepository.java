@@ -15,18 +15,24 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     List<Post> findByAutor_IdUser(Integer autorId);
 
     @Query("SELECT new com.example.backend.dto.PostResponse(" +
-            "p, " +
+            "p.id, " +
+            "p.conteudo, " +
+            "p.dataCriacao, " +
+            "p.autor, " +
             "(SELECT COUNT(l) FROM Like l WHERE l.post.id = p.id), " +
             "(SELECT COUNT(c) FROM Comment c WHERE c.post.id = p.id), " +
-            "false" +
+            "EXISTS(SELECT l FROM Like l WHERE l.post.id = p.id AND l.user.idUser = :currentUserId)" +
             ") FROM Post p ORDER BY p.dataCriacao DESC")
-    List<PostResponse> findAllPostsWithCounts();
+    List<PostResponse> findAllPostsWithCounts(@Param("currentUserId") Integer currentUserId);
 
     @Query("SELECT new com.example.backend.dto.PostResponse(" +
-            "p, " +
+            "p.id, " +
+            "p.conteudo, " +
+            "p.dataCriacao, " +
+            "p.autor, " +
             "(SELECT COUNT(l) FROM Like l WHERE l.post.id = p.id), " +
             "(SELECT COUNT(c) FROM Comment c WHERE c.post.id = p.id), " +
-            "false" +
+            "EXISTS(SELECT l FROM Like l WHERE l.post.id = p.id AND l.user.idUser = :currentUserId)" +
             ") FROM Post p WHERE p.autor.idUser = :autorId ORDER BY p.dataCriacao DESC")
-    List<PostResponse> findByAutor_IdUserWithCounts(@Param("autorId") Integer autorId);
+    List<PostResponse> findByAutor_IdUserWithCounts(@Param("autorId") Integer autorId, @Param("currentUserId") Integer currentUserId);
 }

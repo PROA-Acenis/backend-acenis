@@ -5,6 +5,7 @@ import com.example.backend.dto.FollowRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.backend.dto.FollowToggleResponse;
 
 @RestController
 @RequestMapping("/api/follows")
@@ -18,23 +19,18 @@ public class FollowController {
 
 
     @PostMapping("/toggle")
-    public ResponseEntity<String> toggleFollow(@RequestBody FollowRequest followRequest) {
+    public ResponseEntity<FollowToggleResponse> toggleFollow(@RequestBody FollowRequest followRequest) {
         if (followRequest.getFollowerId() == null || followRequest.getFollowedId() == null) {
-            return new ResponseEntity<>("Missing followerId or followedId", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new FollowToggleResponse(false, 0L, "Missing followerId or followedId"), HttpStatus.BAD_REQUEST);
         }
 
-        boolean wasFollowing = followService.isFollowing(followRequest.getFollowerId(), followRequest.getFollowedId());
+        boolean isNowFollowing = followService.toggleFollow(followRequest.getFollowerId(), followRequest.getFollowedId());
+        Long newFollowersCount = followService.getFollowersCount(followRequest.getFollowedId());
 
-        followService.toggleFollow(followRequest.getFollowerId(), followRequest.getFollowedId());
+        String message = isNowFollowing ? "Successfully followed user" : "Successfully unfollowed user";
+        FollowToggleResponse response = new FollowToggleResponse(isNowFollowing, newFollowersCount, message);
 
-        String message;
-        if (wasFollowing) {
-            message = "Successfully unfollowed user " + followRequest.getFollowedId();
-        } else {
-            message = "Successfully followed user " + followRequest.getFollowedId();
-        }
-
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/followers/count")

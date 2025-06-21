@@ -25,7 +25,7 @@ public class FollowService {
     }
 
     @Transactional
-    public void toggleFollow(Integer followerId, Integer followedId) {
+    public boolean toggleFollow(Integer followerId, Integer followedId) {
         if (followerId.equals(followedId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User cannot follow themselves.");
         }
@@ -39,9 +39,11 @@ public class FollowService {
 
         if (existingFollow.isPresent()) {
             followRepository.delete(existingFollow.get());
+            return false;
         } else {
             Follow newFollow = new Follow(follower, followed);
             followRepository.save(newFollow);
+            return true;
         }
     }
 

@@ -1,4 +1,3 @@
-
 package com.example.backend.repository;
 
 import com.example.backend.model.Follow;
@@ -7,11 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Integer> {
-
 
     Optional<Follow> findByFollowerAndFollowed(Usuario follower, Usuario followed);
 
@@ -19,7 +16,7 @@ public interface FollowRepository extends JpaRepository<Follow, Integer> {
 
     Long countByFollower(Usuario follower);
 
-    List<Follow> findByFollowed(Usuario followed);
+    Long countByFollowed_IdUser(Integer followedId); // Note o _IdUser
 
-    List<Follow> findByFollower(Usuario follower);
+    boolean existsByFollower_IdUserAndFollowed_IdUser(Integer followerId, Integer followedId);
 }
