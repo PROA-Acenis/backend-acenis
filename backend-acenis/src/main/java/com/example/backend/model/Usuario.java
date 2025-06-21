@@ -27,10 +27,10 @@ public class Usuario {
     private String passwordUser;
 
     @Column(name = "job")
-    private String job;
+    private String job; // Campo para Profissional
 
     @Column(name = "register")
-    private String register;
+    private String register; // Campo para Profissional
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo")
@@ -38,6 +38,13 @@ public class Usuario {
 
     @Column(name = "profile_pic")
     private String profilePic;
+
+    @Column(name = "cnpj")
+    private String cnpj;
+
+    @Column(name = "categoria")
+    private String categoria;
+
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("user-posts")
@@ -58,6 +65,21 @@ public class Usuario {
     @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("followed-follows")
     private List<Follow> followers = new ArrayList<>();
+
+    public Usuario() {
+    }
+
+    public Usuario(String nameUser, String emailUser, String passwordUser, TipoUsuario tipo,
+                   String job, String register, String cnpj, String categoria) {
+        this.nameUser = nameUser;
+        this.emailUser = emailUser;
+        this.passwordUser = passwordUser;
+        this.tipo = tipo;
+        this.job = job;
+        this.register = register;
+        this.cnpj = cnpj;
+        this.categoria = categoria;
+    }
 
 
 
@@ -127,6 +149,22 @@ public class Usuario {
 
     public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public List<Post> getPosts() {
