@@ -1,38 +1,61 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.UsuarioRegistrationDTO;
 import com.example.backend.dto.UsuarioUpdateRequest;
 import com.example.backend.model.TipoUsuario;
 import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*") // Permite requisições de qualquer origem (bom para desenvolvimento)
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
 
-    // Injeção de dependência do repositório
     public UsuarioController(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
     /**
-     * Endpoint para CADASTRAR um novo usuário.
+     * Endpoint para CADASTRAR um novo usuário usando um DTO.
      * Método: POST
      * URL: /usuarios
      */
-    @PostMapping
-    public Usuario cadastrar(@RequestBody Usuario usuario) {
-        if (usuarioRepository.existsByEmailUser(usuario.getEmailUser())) {
-            throw new RuntimeException("Email já cadastrado.");
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Usuario> cadastrar(@RequestBody UsuarioRegistrationDTO registrationDTO) { // Agora aceita o DTO!
+        if (usuarioRepository.existsByEmailUser(registrationDTO.getEmailUser())) {
+            return ResponseEntity.status(409).body(null);
         }
-        return usuarioRepository.save(usuario);
+
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setNameUser(registrationDTO.getNameUser());
+        novoUsuario.setEmailUser(registrationDTO.getEmailUser());
+        novoUsuario.setPasswordUser(registrationDTO.getPasswordUser());
+        novoUsuario.setTipo(registrationDTO.getTipo());
+
+        if (registrationDTO.getJob() != null) {
+            novoUsuario.setJob(registrationDTO.getJob());
+        }
+        if (registrationDTO.getRegister() != null) {
+            novoUsuario.setRegister(registrationDTO.getRegister());
+        }
+        if (registrationDTO.getCnpj() != null) {
+            novoUsuario.setCnpj(registrationDTO.getCnpj());
+        }
+        if (registrationDTO.getCategoria() != null) {
+            novoUsuario.setCategoria(registrationDTO.getCategoria());
+        }
+
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+
+        return ResponseEntity.status(201).body(usuarioSalvo);
     }
 
     /**
@@ -58,7 +81,6 @@ public class UsuarioController {
             return ResponseEntity.notFound().build();
         }
 
-        // Atualiza os campos do usuário com os dados recebidos
         Usuario usuarioParaAtualizar = usuarioOpt.get();
         usuarioParaAtualizar.setNameUser(dadosAtualizacao.getNameUser());
         usuarioParaAtualizar.setEmailUser(dadosAtualizacao.getEmailUser());
@@ -66,10 +88,8 @@ public class UsuarioController {
         usuarioParaAtualizar.setJob(dadosAtualizacao.getJob());
         usuarioParaAtualizar.setRegister(dadosAtualizacao.getRegister());
 
-        // Salva o usuário atualizado no banco
         final Usuario usuarioAtualizado = usuarioRepository.save(usuarioParaAtualizar);
 
-        // Retorna 200 OK com o usuário atualizado no corpo da resposta
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
@@ -80,17 +100,12 @@ public class UsuarioController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Integer id) {
-        // Verifica se o usuário com o ID fornecido existe no banco de dados
         if (!usuarioRepository.existsById(id)) {
-            // Se não existir, retorna o status 404 Not Found
             return ResponseEntity.notFound().build();
         }
 
-        // Se o usuário existir, deleta-o do banco
         usuarioRepository.deleteById(id);
 
-        // Retorna o status 204 No Content, indicando que a operação foi bem-sucedida
-        // e não há conteúdo para retornar no corpo da resposta.
         return ResponseEntity.noContent().build();
     }
 
@@ -119,11 +134,8 @@ public class UsuarioController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarPorId(@PathVariable Integer id) {
-        // Tenta encontrar o usuário no repositório pelo ID fornecido
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
 
-        // Se o Optional não estiver vazio (usuário encontrado), retorna 200 OK com o usuário
-        // Se estiver vazio (usuário não encontrado), retorna 404 Not Found
         return usuarioOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
