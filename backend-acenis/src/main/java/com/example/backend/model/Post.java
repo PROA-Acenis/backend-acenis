@@ -24,15 +24,15 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
-    @JsonBackReference("user-posts")
+    @JsonBackReference("user_posts")
     private Usuario autor;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("post-likes")
+    @JsonManagedReference("post_likes")
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("post-comments")
+    @JsonManagedReference("post_comments")
     private List<Comment> comments = new ArrayList<>();
 
 

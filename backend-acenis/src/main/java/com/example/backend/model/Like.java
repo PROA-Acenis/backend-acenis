@@ -16,12 +16,12 @@ public class Like {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_post", nullable = false)
-    @JsonBackReference("post-likes")
+    @JsonBackReference("post_likes")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
-    @JsonBackReference("user-likes")
+    @JsonBackReference("user_likes")
     private Usuario user;
 
     @Column(name = "created_at")

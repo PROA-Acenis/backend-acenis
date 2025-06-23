@@ -40,23 +40,23 @@ public class Usuario {
     private String profilePic;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("user-posts")
+    @JsonManagedReference("user_posts")
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("user-comments")
+    @JsonManagedReference("user_comments")
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("user-likes")
+    @JsonManagedReference("user_likes")
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("follower-follows")
+    @JsonManagedReference("follower_follows")
     private List<Follow> following = new ArrayList<>();
 
     @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("followed-follows")
+    @JsonManagedReference("followed_follows")
     private List<Follow> followers = new ArrayList<>();
 
 
