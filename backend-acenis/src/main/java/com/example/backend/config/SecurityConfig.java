@@ -22,15 +22,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults()) // Usa a configuração do Bean 'corsConfigurationSource'
+                .cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Libera TOTALMENTE as rotas de autenticação, cadastro e o health check
-                        .requestMatchers("/auth/**", "/usuarios", "/health").permitAll()
-                        // Para o teste inicial, vamos liberar a busca de produtos também.
-                        .requestMatchers("/produtos/**").permitAll()
-                        // Qualquer outra rota precisará de autenticação
+                        .requestMatchers("/auth/**", "/usuarios", "/produtos/**", "/health").permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -40,16 +36,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "https://front-end-acenis2.vercel.app",
-                "https://front-end-acenis2.vercel.app/"
-        ));
-
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://front-end-acenis2.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
