@@ -2,35 +2,27 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.LoginResponse;
-import com.example.backend.model.Usuario;
-import com.example.backend.repository.UsuarioRepository;
+import com.example.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final AuthService authService;
 
-    public AuthController(UsuarioRepository usuarioRepository){
-        this.usuarioRepository = usuarioRepository;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailUser(loginRequest.getEmail());
-
-        if (usuarioOpt.isPresent()){
-            Usuario usuario = usuarioOpt.get();
-
-            if (loginRequest.getSenha().equals(usuario.getPasswordUser())){
-                LoginResponse response = new LoginResponse(usuario.getIdUser(), usuario.getNameUser(), usuario.getTipo().name());
-                return ResponseEntity.ok(response);
-            }
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            LoginResponse response = authService.login(loginRequest);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
         }
-        return ResponseEntity.status(401).body("E-mail ou senha inválidos.");
     }
 }

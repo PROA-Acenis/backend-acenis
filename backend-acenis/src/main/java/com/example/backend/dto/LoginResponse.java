@@ -1,37 +1,49 @@
 package com.example.backend.dto;
 
-public class LoginResponse {
-    private Integer id;
-    private String name;
-    private String tipo;
+import com.example.backend.model.TipoUsuario;
 
-    public LoginResponse(Integer id, String name, String tipo) {
-        this.id = id;
-        this.name = name;
+public class LoginResponse {
+    private Integer idUser;
+    private String nameUser;
+    private String emailUser;
+    private TipoUsuario tipo;
+
+    public LoginResponse(Integer idUser, String nameUser, String emailUser, TipoUsuario tipo) {
+        this.idUser = idUser;
+        this.nameUser = nameUser;
+        this.emailUser = emailUser;
         this.tipo = tipo;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdUser() {
+        return idUser;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 
-    public String getName() {
-        return name;
+    public String getNameUser() {
+        return nameUser;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
-    public String getTipo() {
+    public String getEmailUser() {
+        return emailUser;
+    }
+
+    public void setEmailUser(String emailUser) {
+        this.emailUser = emailUser;
+    }
+
+    public TipoUsuario getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
     }
 }
