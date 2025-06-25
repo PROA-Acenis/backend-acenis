@@ -43,7 +43,8 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "https://front-end-acenis2.vercel.app"
+                "https://front-end-acenis2.vercel.app",
+                "https://front-end-acenis2.vercel.app/"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
