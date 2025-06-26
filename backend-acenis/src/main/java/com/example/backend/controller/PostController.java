@@ -1,13 +1,14 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.PostRequest;
-import com.example.backend.dto.PostResponse; // Importar PostResponse
+import com.example.backend.dto.PostResponse;
 import com.example.backend.model.Post;
 import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
 import com.example.backend.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class PostController {
         this.postService = postService;
     }
 
+    @PreAuthorize("hasRole('RESPONSAVEL') or hasRole('FORNECEDOR') or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostRequest postRequest) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(postRequest.getIdUser());
@@ -58,6 +60,8 @@ public class PostController {
         List<PostResponse> posts = postService.getPostsByAutorId(userId, currentUserId);
         return ResponseEntity.ok(posts);
     }
+
+    @PreAuthorize("hasRole('ADMIN') or @postService.isPostAuthor(#id, authentication.principal.username)")
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Integer id) {
