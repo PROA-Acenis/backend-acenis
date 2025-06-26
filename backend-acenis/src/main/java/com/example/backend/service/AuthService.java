@@ -12,9 +12,11 @@ import java.util.Optional;
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
+    private final JwtService jwtService;
 
-    public AuthService(UsuarioRepository usuarioRepository) {
+    public AuthService(UsuarioRepository usuarioRepository, JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
+        this.jwtService = jwtService;
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -23,7 +25,10 @@ public class AuthService {
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
             if (loginRequest.getSenha().equals(usuario.getPasswordUser())) {
+                String token = jwtService.generateToken(usuario.getIdUser());
+
                 return new LoginResponse(
+                        token,
                         usuario.getIdUser(),
                         usuario.getNameUser(),
                         usuario.getEmailUser(),

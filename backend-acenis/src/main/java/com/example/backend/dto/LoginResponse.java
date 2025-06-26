@@ -3,16 +3,25 @@ package com.example.backend.dto;
 import com.example.backend.model.TipoUsuario;
 
 public class LoginResponse {
+    private String token;
     private Integer idUser;
     private String nameUser;
     private String emailUser;
     private TipoUsuario tipo;
 
-    public LoginResponse(Integer idUser, String nameUser, String emailUser, TipoUsuario tipo) {
+    public LoginResponse(String token, Integer idUser, String nameUser, String emailUser, TipoUsuario tipo) {
+        this.token = token;
         this.idUser = idUser;
         this.nameUser = nameUser;
         this.emailUser = emailUser;
         this.tipo = tipo;
+    }
+
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Integer getIdUser() {
