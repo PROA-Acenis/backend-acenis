@@ -19,12 +19,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.filter.CorsFilter; // IMPORTANTE: Adicione este import
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+// Não precisamos mais de 'import static org.springframework.security.config.Customizer.withDefaults;'
 
 @Configuration
 @EnableWebSecurity
@@ -42,7 +42,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
+                // REMOVIDO: .cors(withDefaults()) // Vamos adicionar o CorsFilter explicitamente
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
@@ -51,33 +51,39 @@ public class SecurityConfig {
                                 "/usuarios",
                                 "/produtos/**",
                                 "/health",
-                                "/api/posts",
+                                "/api/posts", // Posts podem ser vistos sem auth, mas ações exigem.
                                 "/api/posts/**",
                                 "/api/follows/**",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+                // Adiciona o filtro JWT antes do filtro de autenticação de username/password
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // Mantido o CorsConfigurationSource como um Bean para o CorsFilter usá-lo
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://front-end-acenis2.vercel.app"));
-
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Inclua OPTIONS!
-
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+        configuration.setMaxAge(3600L); // 1 hora
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    // NOVO BEAN: Registra o CorsFilter no Spring Security
+    @Bean
+    public CorsFilter corsFilter() {
+        // Usa o CorsConfigurationSource que já definimos acima
+        return new CorsFilter(corsConfigurationSource());
     }
 
     @Bean
