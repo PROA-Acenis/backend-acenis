@@ -12,19 +12,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter; // IMPORTANTE: Adicione este import
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.List;
-
-// Não precisamos mais de 'import static org.springframework.security.config.Customizer.withDefaults;'
 
 @Configuration
 @EnableWebSecurity
@@ -42,7 +40,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // REMOVIDO: .cors(withDefaults()) // Vamos adicionar o CorsFilter explicitamente
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
@@ -51,20 +48,18 @@ public class SecurityConfig {
                                 "/usuarios",
                                 "/produtos/**",
                                 "/health",
-                                "/api/posts", // Posts podem ser vistos sem auth, mas ações exigem.
+                                "/api/posts",
                                 "/api/posts/**",
                                 "/api/follows/**",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                // Adiciona o filtro JWT antes do filtro de autenticação de username/password
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Mantido o CorsConfigurationSource como um Bean para o CorsFilter usá-lo
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -72,17 +67,15 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // 1 hora
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-    // NOVO BEAN: Registra o CorsFilter no Spring Security
     @Bean
     public CorsFilter corsFilter() {
-        // Usa o CorsConfigurationSource que já definimos acima
         return new CorsFilter(corsConfigurationSource());
     }
 
@@ -90,7 +83,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder()); // Agora sem criptografia
         return authProvider;
     }
 
@@ -101,6 +94,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // Retorna um encoder que não faz criptografia
+        return NoOpPasswordEncoder.getInstance();
     }
 }
