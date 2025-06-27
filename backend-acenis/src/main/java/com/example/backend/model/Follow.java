@@ -1,6 +1,7 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_follow")
@@ -18,11 +19,15 @@ public class Follow {
     @JoinColumn(name = "id_followed", nullable = false)
     private Usuario followed;
 
+    @Column(name = "follow_date", nullable = false) // Mapeia o campo para a coluna no banco
+    private LocalDateTime followDate; // Adiciona o campo para a data de follow
+
     public Follow() {}
 
     public Follow(Usuario follower, Usuario followed) {
         this.follower = follower;
         this.followed = followed;
+        this.followDate = LocalDateTime.now();
     }
 
     public Integer getId() {
@@ -48,4 +53,8 @@ public class Follow {
     public void setFollowed(Usuario followed) {
         this.followed = followed;
     }
+
+    public LocalDateTime getFollowDate() { return followDate; }
+
+    public void setFollowDate(LocalDateTime followDate) { this.followDate = followDate; }
 }
