@@ -10,6 +10,7 @@ import com.example.backend.repository.FollowRepository;
 import org.springframework.stereotype.Service;
 import com.example.backend.dto.PostResponse;
 import com.example.backend.dto.AuthorResponse;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,21 @@ public class PostService {
         this.likePostRepository = likePostRepository;
         this.usuarioRepository = usuarioRepository;
         this.followRepository = followRepository;
+    }
+    public boolean isPostAuthor(Integer postId, String userEmail) {
+        Optional<Post> postOpt = postRepository.findById(postId);
+        if (postOpt.isEmpty()) {
+            return false;
+        }
+        Post post = postOpt.get();
+
+        Optional<Usuario> userOpt = usuarioRepository.findByEmailUser(userEmail);
+        if (userOpt.isEmpty()) {
+            return false;
+        }
+        Usuario currentUser = userOpt.get();
+
+        return post.getAutor().getIdUser().equals(currentUser.getIdUser());
     }
 
     public Post createPost(Post post) {
