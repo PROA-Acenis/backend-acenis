@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Table(name = "tb_user")
 @Entity
@@ -42,6 +43,17 @@ public class Usuario {
     @Column(name = "categoria")
     private String categoria;
 
+    @OneToMany(mappedBy = "profissional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Cliente> clientes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profissional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Anotacao> anotacoes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profissional", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<EventoAgenda> eventos = new ArrayList<>();
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("user_posts")
@@ -177,5 +189,29 @@ public class Usuario {
     public void removeFollower(Follow follow) {
         this.followers.remove(follow);
         follow.setFollowed(null);
+    }
+
+    public List<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(List<Cliente> clientes) {
+        this.clientes = clientes;
+    }
+
+    public List<Anotacao> getAnotacoes() {
+        return anotacoes;
+    }
+
+    public void setAnotacoes(List<Anotacao> anotacoes) {
+        this.anotacoes = anotacoes;
+    }
+
+    public List<EventoAgenda> getEventos() {
+        return eventos;
+    }
+
+    public void setEventos(List<EventoAgenda> eventos) {
+        this.eventos = eventos;
     }
 }
