@@ -44,4 +44,19 @@ public class LikePostService {
             likePostRepository.save(newLike);
         }
     }
+
+    public boolean isLiked(Integer postId, Integer userId) {
+        Optional<Usuario> userOpt = usuarioRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return false;
+        }
+        Usuario user = userOpt.get();
+
+        return likePostRepository.findByPostIdAndUser(postId, user).isPresent();
+    }
+
+    public int getLikesCount(Integer postId) {
+        return likePostRepository.countByPost_Id(postId).intValue();
+    }
+
 }
