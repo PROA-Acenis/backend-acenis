@@ -5,12 +5,15 @@ import com.example.backend.dto.UsuarioUpdateRequest;
 import com.example.backend.model.TipoUsuario;
 import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
+import com.example.backend.repository.FollowRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,18 +21,15 @@ import java.util.Optional;
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
+    private final FollowRepository followRepository;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
+    public UsuarioController(UsuarioRepository usuarioRepository, FollowRepository followRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.followRepository = followRepository;
     }
 
-    /**
-     * Endpoint para CADASTRAR um novo usuário usando um DTO.
-     * Método: POST
-     * URL: /usuarios
-     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Usuario> cadastrar(@RequestBody UsuarioRegistrationDTO registrationDTO) { // Agora aceita o DTO!
+    public ResponseEntity<Usuario> cadastrar(@RequestBody UsuarioRegistrationDTO registrationDTO) {
         if (usuarioRepository.existsByEmailUser(registrationDTO.getEmailUser())) {
             return ResponseEntity.status(409).body(null);
         }
@@ -58,21 +58,11 @@ public class UsuarioController {
         return ResponseEntity.status(201).body(usuarioSalvo);
     }
 
-    /**
-     * Endpoint para LISTAR TODOS os usuários.
-     * Método: GET
-     * URL: /usuarios
-     */
     @GetMapping
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
 
-    /**
-     * Endpoint para ATUALIZAR um usuário existente pelo ID.
-     * Método: PUT
-     * URL: /usuarios/{id}
-     */
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioUpdateRequest dadosAtualizacao) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
@@ -93,11 +83,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
-    /**
-     * Endpoint para DELETAR um usuário pelo ID.
-     * Método: DELETE
-     * URL: /usuarios/{id}
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Integer id) {
         if (!usuarioRepository.existsById(id)) {
@@ -109,34 +94,40 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Rota para a página de Profissionais.
-     * Retorna uma lista contendo apenas os usuários com tipo PROFISSIONAL.
-     */
     @GetMapping("/profissionais")
     public List<Usuario> listarProfissionais() {
         return usuarioRepository.findByTipo(TipoUsuario.PROFISSIONAL);
     }
 
-    /**
-     * Rota para a página de Responsáveis.
-     * Retorna uma lista contendo apenas os usuários com tipo RESPONSAVEL.
-     */
     @GetMapping("/responsaveis")
     public List<Usuario> listarResponsaveis() {
         return usuarioRepository.findByTipo(TipoUsuario.RESPONSAVEL);
     }
 
-    /**
-     * Endpoint para BUSCAR um usuário específico pelo ID.
-     * Método: GET
-     * URL: /usuarios/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> buscarPorId(@PathVariable Integer id) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
 
         return usuarioOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{userId}/followStats")
+    public ResponseEntity<Map<String, Long>> getFollowStats(@PathVariable Integer userId) {
+        Optional<Usuario> userOpt = usuarioRepository.findById(userId);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Usuario user = userOpt.get();
+
+        Long followersCount = followRepository.countByFollowed_IdUser(user.getIdUser());
+        Long followingCount = followRepository.countByFollower_IdUser(user.getIdUser());
+
+        return ResponseEntity.ok(Map.of(
+                "followersCount", followersCount,
+                "followingCount", followingCount
+        ));
     }
 }
