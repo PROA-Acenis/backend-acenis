@@ -1,32 +1,36 @@
 package com.example.backend.dto;
 
 import com.example.backend.model.Usuario;
+import com.example.backend.model.TipoUsuario;
 
 public class AuthorResponse {
-    private Integer id;
+    private Integer idUser;
     private String nameUser;
     private String emailUser;
+    private String tipo;
     private String profilePic;
-    private String job;
     private Long followersCount;
     private Boolean isFollowingAuthor;
 
     public AuthorResponse(Usuario usuario) {
-        this.id = usuario.getIdUser();
-        this.nameUser = usuario.getNameUser();
-        this.emailUser = usuario.getEmailUser();
-        this.profilePic = usuario.getProfilePic();
-        this.job = usuario.getJob();
-        this.followersCount = 0L;
-        this.isFollowingAuthor = false;
+        if (usuario != null) {
+            this.idUser = usuario.getIdUser();
+            this.nameUser = usuario.getNameUser();
+            this.emailUser = usuario.getEmailUser();
+            this.tipo = usuario.getTipo() != null ? usuario.getTipo().name() : null;
+            this.profilePic = usuario.getProfilePic();
+        }
     }
 
-    public Integer getId() {
-        return id;
+    public AuthorResponse() {
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 
     public String getNameUser() {
@@ -45,20 +49,20 @@ public class AuthorResponse {
         this.emailUser = emailUser;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public String getProfilePic() {
         return profilePic;
     }
 
     public void setProfilePic(String profilePic) {
         this.profilePic = profilePic;
-    }
-
-    public String getJob() {
-        return job;
-    }
-
-    public void setJob(String job) {
-        this.job = job;
     }
 
     public Long getFollowersCount() {

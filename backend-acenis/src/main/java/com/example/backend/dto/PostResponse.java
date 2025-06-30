@@ -10,9 +10,10 @@ public class PostResponse {
     private String conteudo;
     private LocalDateTime dataCriacao;
     private AuthorResponse autor;
-    private Long likesCount;
-    private Long commentsCount;
-    private Boolean likedByUser;
+    private boolean likedByUser;
+    private long likesCount;
+    private long commentsCount;
+    private boolean isFollowingAuthor;
 
     public PostResponse(
             Integer id,
@@ -75,27 +76,35 @@ public class PostResponse {
         this.autor = autor;
     }
 
-    public Long getLikesCount() {
+    public long getLikesCount() {
         return likesCount;
     }
 
-    public void setLikesCount(Long likesCount) {
+    public void setLikesCount(long likesCount) {
         this.likesCount = likesCount;
     }
 
-    public Long getCommentsCount() {
+    public long getCommentsCount() {
         return commentsCount;
     }
 
-    public void setCommentsCount(Long commentsCount) {
+    public void setCommentsCount(long commentsCount) {
         this.commentsCount = commentsCount;
     }
 
-    public Boolean getLikedByUser() {
+    public boolean getLikedByUser() {
         return likedByUser;
     }
 
-    public void setLikedByUser(Boolean likedByUser) {
+    public void setLikedByUser(boolean likedByUser) {
         this.likedByUser = likedByUser;
+    }
+
+    public boolean getIsFollowingAuthor() {
+        return isFollowingAuthor;
+    }
+
+    public void setIsFollowingAuthor(boolean isFollowingAuthor) {
+        this.isFollowingAuthor = isFollowingAuthor;
     }
 }

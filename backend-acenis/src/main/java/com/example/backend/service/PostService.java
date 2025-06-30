@@ -30,6 +30,7 @@ public class PostService {
         this.usuarioRepository = usuarioRepository;
         this.followRepository = followRepository;
     }
+
     public boolean isPostAuthor(Integer postId, String userEmail) {
         Optional<Post> postOpt = postRepository.findById(postId);
         if (postOpt.isEmpty()) {
@@ -51,16 +52,23 @@ public class PostService {
     }
 
     private PostResponse enrichPostResponse(PostResponse postResponse, Integer currentUserId) {
-        if (postResponse.getAutor() != null) {
-            Long followersCount = followRepository.countByFollowed_IdUser(postResponse.getAutor().getId());
+        if (postResponse.getAutor() != null && postResponse.getAutor().getIdUser() != null) {
+
+            Long followersCount = followRepository.countByFollowed_IdUser(postResponse.getAutor().getIdUser());
             postResponse.getAutor().setFollowersCount(followersCount);
 
             if (currentUserId != null) {
-                boolean isFollowing = followRepository.existsByFollower_IdUserAndFollowed_IdUser(currentUserId, postResponse.getAutor().getId());
-                postResponse.getAutor().setIsFollowingAuthor(isFollowing);
+                boolean isFollowing = followRepository.existsByFollower_IdUserAndFollowed_IdUser(currentUserId, postResponse.getAutor().getIdUser());
+                postResponse.setIsFollowingAuthor(isFollowing);
             } else {
-                postResponse.getAutor().setIsFollowingAuthor(false);
+                postResponse.setIsFollowingAuthor(false);
             }
+        } else {
+            if (postResponse.getAutor() == null) {
+                postResponse.setAutor(new AuthorResponse());
+            }
+            postResponse.getAutor().setFollowersCount(0L);
+            postResponse.setIsFollowingAuthor(false);
         }
         return postResponse;
     }
