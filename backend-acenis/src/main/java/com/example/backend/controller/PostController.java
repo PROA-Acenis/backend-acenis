@@ -7,12 +7,12 @@ import com.example.backend.model.Usuario;
 import com.example.backend.repository.UsuarioRepository;
 import com.example.backend.service.PostService;
 import com.example.backend.service.LikePostService;
-import com.example.backend.service.UserDetailsImpl;
+import com.example.backend.service.JwtService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,13 +26,14 @@ public class PostController {
     private final UsuarioRepository usuarioRepository;
     private final PostService postService;
     private final LikePostService likePostService;
+    private final JwtService jwtService;
 
-    public PostController(UsuarioRepository usuarioRepository, PostService postService, LikePostService likePostService) {
+    public PostController(UsuarioRepository usuarioRepository, PostService postService, LikePostService likePostService, JwtService jwtService) {
         this.usuarioRepository = usuarioRepository;
         this.postService = postService;
         this.likePostService = likePostService;
+        this.jwtService = jwtService;
     }
-
     @PreAuthorize("hasRole('RESPONSAVEL') or hasRole('FORNECEDOR') or hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostRequest postRequest) {
@@ -67,17 +68,30 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @PreAuthorize("isAuthenticated()") // O usuário deve estar logado
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{postId}/like")
     public ResponseEntity<?> toggleLike(
             @PathVariable Integer postId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            HttpServletRequest request) {
 
-        if (userDetails == null || userDetails.getIdUser() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Usuário não autenticado ou ID de usuário não disponível."));
+        String authHeader = request.getHeader("Authorization");
+        String token = null;
+        String userEmail = null;
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            userEmail = jwtService.extractUsername(token);
         }
 
-        Integer userId = userDetails.getIdUser();
+        if (userEmail == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Token JWT inválido ou usuário não encontrado."));
+        }
+
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailUser(userEmail);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Usuário do token não encontrado no banco de dados."));
+        }
+        Integer userId = usuarioOpt.get().getIdUser();
 
         try {
             likePostService.toggleLike(postId, userId);
