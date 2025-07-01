@@ -1,8 +1,8 @@
 FROM maven:3.9-eclipse-temurin-24 AS build
 WORKDIR /app
-COPY backend-acenis/pom.xml .
+COPY pom.xml .
 RUN mvn dependency:go-offline
-COPY backend-acenis/src ./src
+COPY src ./src
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:24-jre
