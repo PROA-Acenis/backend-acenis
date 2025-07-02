@@ -13,6 +13,7 @@ import java.util.List;
 
 @Table(name = "tb_user")
 @Entity
+// A classe implementa a interface UserDetails para ser compatível com o Spring Security.
 public class Usuario implements UserDetails {
 
     @Id
@@ -23,9 +24,10 @@ public class Usuario implements UserDetails {
     @Column(name = "name_user")
     private String nameUser;
 
-    @Column(name = "email_user", unique = true)
+    @Column(name = "email_user", unique = true, nullable = false)
     private String emailUser;
 
+    @JsonIgnore // Garante que a senha nunca será enviada nas respostas da API.
     @Column(name = "password_user")
     private String passwordUser;
 
@@ -48,7 +50,6 @@ public class Usuario implements UserDetails {
     @Column(name = "categoria")
     private String categoria;
 
-    // --- RELAÇÕES COM DASHBOARD ---
     @OneToMany(mappedBy = "profissional", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Cliente> clientes = new ArrayList<>();
@@ -61,7 +62,6 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     private List<EventoAgenda> eventos = new ArrayList<>();
 
-    // --- RELAÇÕES SOCIAIS ---
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("user_posts")
     private List<Post> posts = new ArrayList<>();

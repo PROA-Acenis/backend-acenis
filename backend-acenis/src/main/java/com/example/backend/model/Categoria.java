@@ -1,10 +1,12 @@
 package com.example.backend.model;
 
 import com.example.backend.model.enums.NomeCategoria;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_category")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Categoria {
 
     @Id
