@@ -24,42 +24,33 @@ public class FornecedorProdutoService {
     }
 
     public List<Produto> listarProdutosPorFornecedor(Integer fornecedorId) {
-        System.out.println("SERVICE LOG: Buscando produtos para o fornecedor ID: " + fornecedorId);
         return produtoRepository.findByFornecedorIdUser(fornecedorId);
     }
 
     public Produto criarProduto(Integer fornecedorId, ProdutoDTO dto) {
-        System.out.println("SERVICE LOG: Iniciando criação de produto para fornecedor ID: " + fornecedorId);
-
         Usuario fornecedor = usuarioRepository.findById(fornecedorId)
-                .orElseThrow(() -> new RuntimeException("Fornecedor com ID " + fornecedorId + " não encontrado."));
-
+                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria com ID " + dto.getCategoriaId() + " não encontrada."));
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
         Produto produto = new Produto();
-
         produto.setNome(dto.getNome());
         produto.setDescricao(dto.getDescricao());
         produto.setPreco(dto.getPreco());
+        produto.setImagem("placeholder.png"); // Lógica de upload virá depois
+        produto.setFaixaEtaria(dto.getFaixaEtaria());
         produto.setEstoque(dto.getEstoque());
         produto.setDimensoes(dto.getDimensoes());
-        produto.setFaixaEtaria(dto.getFaixaEtaria());
         produto.setGenero(dto.getGenero());
         produto.setDesconto(dto.getDesconto());
         produto.setTipoDesconto(dto.getTipoDesconto());
-
         produto.setCategoria(categoria);
         produto.setFornecedor(fornecedor);
-        produto.setImagem("placeholder.png"); // Lógica de upload de imagem virá no futuro
 
-        Produto produtoSalvo = produtoRepository.save(produto);
-        System.out.println("SERVICE LOG: Produto '" + produtoSalvo.getNome() + "' salvo com sucesso.");
-        return produtoSalvo;
+        return produtoRepository.save(produto);
     }
 
     public void deletarProduto(Integer produtoId, Integer fornecedorId) {
-        System.out.println("SERVICE LOG: Tentando deletar produto ID: " + produtoId + " pelo fornecedor ID: " + fornecedorId);
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
@@ -68,6 +59,5 @@ public class FornecedorProdutoService {
         }
 
         produtoRepository.deleteById(produtoId);
-        System.out.println("SERVICE LOG: Produto deletado com sucesso.");
     }
 }

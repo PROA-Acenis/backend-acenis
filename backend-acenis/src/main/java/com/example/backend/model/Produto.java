@@ -9,18 +9,19 @@ import java.math.BigDecimal;
 @Table(name = "tb_product")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Produto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_product")
     private Integer id;
 
-    @Column(name = "name_product", nullable = false)
+    @Column(name = "name_product")
     private String nome;
 
     @Column(name = "description_product", columnDefinition = "TEXT")
     private String descricao;
 
-    @Column(name = "price_product", nullable = false)
+    @Column(name = "price_product")
     private BigDecimal preco;
 
     @Column(name = "image_product")
