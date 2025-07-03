@@ -21,11 +21,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults()) // Mantém a configuração de CORS
-                .csrf(csrf -> csrf.disable()) // Desativa a proteção CSRF
-
+                .cors(withDefaults()) // Usa a configuração do Bean 'corsConfigurationSource'
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
+                        .requestMatchers("/auth/**", "/usuarios", "/produtos/**", "/health").permitAll()
+                        .anyRequest().authenticated()
                 );
 
         return http.build();
@@ -33,7 +34,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://front-end-acenis2.vercel.app", "acenis.com.br", "www.acenis.com.br"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "https://front-end-acenis2.vercel.app",
+                "https://www.acenis.com.br"
+        ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/fornecedor-dashboard")
-@CrossOrigin(origins = {"http://localhost:5173", "https://front-end-acenis2.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://front-end-acenis2.vercel.app", "https://www.acenis.com.br"})
 public class FornecedorDashboardController {
 
     private final FornecedorProdutoService produtoService;
