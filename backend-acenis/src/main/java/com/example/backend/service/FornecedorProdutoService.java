@@ -38,6 +38,7 @@ public class FornecedorProdutoService {
                 .orElseThrow(() -> new RuntimeException("Categoria com ID " + dto.getCategoriaId() + " não encontrada."));
 
         Produto produto = new Produto();
+
         produto.setNome(dto.getNome());
         produto.setDescricao(dto.getDescricao());
         produto.setPreco(dto.getPreco());
@@ -47,21 +48,26 @@ public class FornecedorProdutoService {
         produto.setGenero(dto.getGenero());
         produto.setDesconto(dto.getDesconto());
         produto.setTipoDesconto(dto.getTipoDesconto());
+
         produto.setCategoria(categoria);
         produto.setFornecedor(fornecedor);
-        produto.setImagem("placeholder.png");
+        produto.setImagem("placeholder.png"); // Lógica de upload de imagem virá no futuro
 
         Produto produtoSalvo = produtoRepository.save(produto);
         System.out.println("SERVICE LOG: Produto '" + produtoSalvo.getNome() + "' salvo com sucesso.");
         return produtoSalvo;
     }
 
-    public void deletarProduto(Integer produtoId) {
-        System.out.println("SERVICE LOG: Deletando produto ID: " + produtoId);
-        if (!produtoRepository.existsById(produtoId)) {
-            throw new RuntimeException("Produto com ID " + produtoId + " não encontrado para exclusão.");
+    public void deletarProduto(Integer produtoId, Integer fornecedorId) {
+        System.out.println("SERVICE LOG: Tentando deletar produto ID: " + produtoId + " pelo fornecedor ID: " + fornecedorId);
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+        if (!produto.getFornecedor().getIdUser().equals(fornecedorId)) {
+            throw new SecurityException("Acesso negado: você não é o dono deste produto.");
         }
+
         produtoRepository.deleteById(produtoId);
-        System.out.println("SERVICE LOG: Produto ID: " + produtoId + " deletado com sucesso.");
+        System.out.println("SERVICE LOG: Produto deletado com sucesso.");
     }
 }
